@@ -101,32 +101,31 @@ group by store.store_id
 order by 'dollars' desc;
 
 select store.store_id, city.city, country.country from store
-join address using (address_id)
-join city using (city_id)
-join country using (country_id);
+join address on store.address_id = address.address_id
+join city on city.city_id = address.city_id
+join country on city.country_id= country.country_id;
 
-select category.name ,sum(payment.amount) as revenue from payment 
-join rental using (rental_id)
-join inventory using (inventory_id)
-join film_category using (film_id)
-join category using (category_id)
+select category.name,sum(payment.amount) as 'gross revenue' from payment 
+join rental using (rental_id) 
+join inventory on rental.inventory_id = inventory.inventory_id
+join film_category on inventory.film_id = film_category.film_id
+join category on film_category.category_id = category.category_id
 group by category.name 
-order by revenue desc
+order by 'gross revenue' desc
 limit 5;
 
 #8 
 
-
-create view Top_5_genres as
-select category.name ,sum(payment.amount) as revenue from payment 
+create view top_genres as
+select category.name ,sum(payment.amount) as 'gross revenue' from payment 
 join rental using (rental_id)
-join inventory using (inventory_id)
+join inventory on rental.inventory_id = inventory.inventory_id
 join film_category using (film_id)
-join category using (category_id)
+join category on film_category.category_id = category.category_id
 group by category.name 
-order by revenue desc
+order by 'gross revenue' desc
 limit 5;
 
-select * from top_5_genres;
+select * from top_genres;
 
-drop view top_5_genres;
+drop view top_genres;
